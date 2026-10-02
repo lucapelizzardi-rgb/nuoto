@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Schede allenamento giornaliere</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%8A%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zalando+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff; --ink:#0b181c; --muted:#3d5155; --label:#55696f; --line:#cdd5d6;
+  --gold:#c2a221; --gold-ink:#7a6300; --on-gold:#0b181c; --card:#f3f5f5; --rule:#0b181c;
+  --head:"Zalando Sans",Inter,"Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;
+  --body:Inter,"Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b181c; --ink:#f1f4f4; --muted:#cdd5d6; --label:#9fb2b8; --line:#2b3c41;
+    --gold:#c2a221; --gold-ink:#d9b83a; --on-gold:#0b181c; --card:#112126; --rule:#f1f4f4;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b181c; --ink:#f1f4f4; --muted:#cdd5d6; --label:#9fb2b8; --line:#2b3c41;
+  --gold:#c2a221; --gold-ink:#d9b83a; --on-gold:#0b181c; --card:#112126; --rule:#f1f4f4;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;font-size:112.5%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.45;
+  padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0)}
+.wrap{max-width:56rem;margin:0 auto;padding:.8rem 1rem 3.5rem}
+.toolbar{display:flex;justify-content:flex-end}
+
+/* livello 1: titolo */
+header.top{padding:1.4rem 0 1.8rem;margin-bottom:1.6rem;border-bottom:1px solid var(--line)}
+header.top h1{font-family:var(--head);font-weight:500;font-size:2.8rem;line-height:1;letter-spacing:-.035em;margin:0}
+header.top .intro{margin:.9rem 0 0;max-width:30rem;color:var(--muted);font-size:1.1rem}
+
+button,input{font:inherit;color:inherit}
+button{background:transparent;border:1.5px solid var(--ink);color:var(--ink);border-radius:.3rem;
+  padding:.6rem .9rem;font-weight:600;min-height:3rem;cursor:pointer}
+button.solid{background:var(--gold);border-color:var(--gold);color:var(--on-gold)}
+button.small{min-height:2.4rem;padding:.3rem .8rem;font-size:.9rem;border-color:var(--line);color:var(--muted)}
+button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* scelta data */
+.datebar{display:grid;grid-template-columns:1fr;gap:.8rem;margin-bottom:2rem;background:var(--card);padding:1rem;border-radius:.4rem}
+.datebar label{font-weight:600;display:block;margin-bottom:.35rem}
+.datebar input[type=date]{width:100%;min-height:3.2rem;font-size:1.3rem;font-weight:600;padding:.4rem .7rem;
+  background:var(--bg);border:1.5px solid var(--ink);border-radius:.3rem}
+.nav{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:.5rem}
+.daytext{margin:.4rem 0 0;color:var(--muted);font-size:.95rem}
+
+/* livello 2: la settimana */
+.status{border-top:4px solid var(--gold);padding:1.1rem 0 1.4rem;margin-bottom:.4rem}
+.status .wk{font-family:var(--head);font-weight:500;font-size:3.6rem;line-height:1;letter-spacing:-.04em;margin:0}
+.status .dates{font-size:1.25rem;font-weight:600;margin:.5rem 0 0;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(3,auto);justify-content:start;gap:.4rem 2.2rem;margin:1.1rem 0 0}
+.stats div{display:flex;flex-direction:column-reverse}
+.stats dt{font-size:.9rem;color:var(--label)}
+.stats dd{margin:0;font-family:var(--head);font-weight:600;font-size:1.35rem;letter-spacing:-.01em}
+.badge{display:inline-block;background:var(--gold);color:var(--on-gold);border-radius:.25rem;
+  padding:.15rem .6rem;font-family:var(--body);font-size:1rem;font-weight:600;letter-spacing:0;margin-left:.8rem;vertical-align:middle}
+.msg{background:var(--card);border-left:4px solid var(--gold);padding:1rem 1.1rem;margin-bottom:1rem;font-size:1.15rem}
+.msg strong{display:block;font-size:1.3rem;margin-bottom:.3rem}
+.msg button{margin-top:.8rem}
+
+/* livello 3: sezioni */
+h2{font-family:var(--head);font-weight:500;font-size:1.8rem;line-height:1.1;letter-spacing:-.025em;margin:2.6rem 0 .7rem;padding-top:1rem;position:relative}
+h2::before{content:"";position:absolute;top:0;left:0;width:2.6rem;height:3px;background:var(--gold)}
+h2.first{margin-top:1.4rem}
+h3{font-family:var(--head);font-weight:600;font-size:1.25rem;line-height:1.15;letter-spacing:-.01em;margin:1.5rem 0 .5rem}
+.note{color:var(--muted);margin:.1rem 0 1rem}
+
+/* tabella: la serie è l'informazione principale, la partenza la seconda */
+table{width:100%;border-collapse:collapse;font-size:1rem}
+th,td{padding:.85rem .8rem .85rem 0;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+thead th{color:var(--label);font-weight:500;font-size:.9rem;border-bottom:2px solid var(--rule);padding-top:.3rem}
+tbody th{font-weight:600;white-space:nowrap;padding-right:1.2rem;color:var(--gold-ink);font-size:.95rem}
+td.serie{font-weight:600;font-size:1.2rem;line-height:1.3;letter-spacing:-.005em}
+td.partenza{font-weight:700;font-size:1.2rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.partenza.long{white-space:normal}
+td.indic{color:var(--muted);font-size:.95rem}
+.tablewrap{overflow-x:auto}
+
+/* promemoria: peso visivo basso */
+.recs{margin:0;padding:0;list-style:none}
+.recs li{border-left:2px solid var(--line);padding:.1rem 0 .1rem .8rem;margin:0 0 .6rem;font-size:.95rem;color:var(--muted)}
+h3.sub{font-size:1rem;font-weight:600;color:var(--label);margin-top:1.8rem}
+
+/* esercizi */
+.ex{list-style:none;margin:0;padding:0}
+.ex li{display:grid;grid-template-columns:1.5rem 3.2rem 1fr;gap:.5rem;padding:.65rem 0;border-bottom:1px solid var(--line);align-items:baseline}
+.ex .n{font-family:var(--head);font-weight:500;font-size:1.5rem;line-height:1;color:var(--gold-ink)}
+.ex .code{font-weight:700}
+.ex .t{color:var(--muted)}
+
+/* da consultare */
+details{border-bottom:1px solid var(--line)}
+details:first-of-type{border-top:1px solid var(--line)}
+summary{font-family:var(--head);font-weight:500;font-size:1.3rem;letter-spacing:-.015em;padding:.9rem 0;cursor:pointer;min-height:3.2rem;display:flex;align-items:center;justify-content:space-between;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:var(--body);font-size:1.6rem;font-weight:400;color:var(--gold-ink);line-height:1}
+details[open] summary::after{content:"–"}
+details > .inner{padding:0 0 1.3rem}
+a{color:var(--gold-ink);font-weight:600;text-underline-offset:.15em;overflow-wrap:anywhere}
+.videos{list-style:none;margin:0;padding:0}
+.videos li{padding:.65rem 0;border-bottom:1px solid var(--line)}
+.videos .v{font-weight:700}
+.videos span.d{display:block;color:var(--muted)}
+.videos a{font-size:1rem;display:inline-block;padding:.15rem 0}
+.chan li{display:grid;grid-template-columns:9rem 1fr;gap:.5rem;align-items:baseline}
+.lead{margin:.2rem 0 .8rem;color:var(--muted)}
+.extra-d{margin-top:2.4rem}
+[hidden]{display:none!important}
+
+@media (max-width:640px){
+  /* a bordo vasca: ogni riga della tabella diventa una scheda leggibile a distanza */
+  header.top h1{font-size:2.3rem}
+  .status .wk{font-size:3rem}
+  .stats{grid-template-columns:repeat(3,auto);gap:.4rem 1.4rem}
+  table.session thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  table.session, table.session tbody, table.session tr, table.session th, table.session td{display:block;border:0;padding:0}
+  table.session tr{border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:.25rem;padding:.75rem .9rem;margin-bottom:.6rem}
+  table.session tbody th{font-size:.95rem;margin-bottom:.3rem}
+  table.session td.serie{font-size:1.4rem;line-height:1.25}
+  table.session td.partenza{font-size:1.5rem;margin-top:.5rem;white-space:normal}
+  table.session td.indic{font-size:1.05rem;margin-top:.4rem}
+  table.session td.partenza::before,table.session td.indic::before{content:attr(data-label) ": ";font-weight:400;font-size:.9rem;color:var(--label)}
+  table.session td:empty{display:none}
+  .chan li{grid-template-columns:1fr;gap:0}
+}
+@media print{button,.datebar,.toolbar{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="toolbar"><button type="button" id="theme" class="small" aria-label="Cambia tema chiaro/scuro">Tema scuro</button></div>
+  <header class="top">
+    <h1 id="title"></h1>
+    <p class="intro" id="intro"></p>
+  </header>
+
+  <noscript><div class="msg"><strong>JavaScript è disattivato</strong>Attivalo nel browser per vedere la tabella della settimana.</div></noscript>
+
+  <section class="datebar" aria-label="Scelta della data">
+    <div>
+      <label for="date">Data dell'allenamento</label>
+      <input type="date" id="date">
+      <p class="daytext" id="daytext" aria-live="polite"></p>
+    </div>
+    <div class="nav">
+      <button type="button" id="prev">‹ Sett. prima</button>
+      <button type="button" id="today" class="solid">Oggi</button>
+      <button type="button" id="next">Sett. dopo ›</button>
+    </div>
+  </section>
+
+  <div id="out" class="msg" hidden role="status"></div>
+
+  <main id="session" hidden>
+    <section class="status" aria-live="polite">
+      <p class="wk" id="wk"></p>
+      <p class="dates" id="wkdates"></p>
+      <dl class="stats">
+        <div><dt>Blocco</dt><dd id="blk"></dd></div>
+        <div><dt>Metri totali</dt><dd id="mt"></dd></div>
+        <div><dt>Vale per</dt><dd>2 allenamenti</dd></div>
+      </dl>
+    </section>
+
+    <h2 class="first">Tabella della settimana</h2>
+    <p class="note">Dall'alto in basso. Vale per 2 allenamenti.</p>
+    <div class="tablewrap" id="main-table"></div>
+    <div id="drills-box" hidden>
+      <h3>Esercizi di tecnica di questa settimana</h3>
+      <ul class="ex" id="drills"></ul>
+    </div>
+
+    <h3 class="sub">Promemoria</h3>
+    <ul class="recs" id="recs"></ul>
+
+    <details class="extra-d" id="d-extra"><summary id="extra-h"></summary><div class="inner"><p class="lead" id="extra-p"></p><div id="extra"></div></div></details>
+  </main>
+
+  <h2>Da consultare</h2>
+  <details id="d-legend"><summary>Come leggere la scheda</summary><div class="inner" id="legend"></div></details>
+  <details id="d-cat"><summary>Esercizi di tecnica</summary><div class="inner" id="catalog"></div></details>
+  <details id="d-vid"><summary>Video e canali YouTube</summary><div class="inner" id="videos"></div></details>
+  <details id="d-blocks"><summary>Blocchi del programma</summary><div class="inner" id="blocks"></div></details>
+</div>
+
+<script>
+const DATA = {"title":"Schede allenamento giornaliere","intro":"In questo link puoi trovare l'allenamento corretto in base al giorno inserito.","howto_p":"Trova la settimana che contiene la data di oggi e nuota la tabella dall'alto in basso. Ogni settimana ha una sola tabella e vale per 2 allenamenti. Ogni seduta completa dura circa 50–60 minuti, vasca da 25 m, con pull buoy e tavoletta.","legend":[["SL / DO / RA / DF","Stile libero / dorso / rana / delfino"],["Misti","25 per stile in ordine DF, DO, RA, SL"],["A1","Facile, ritmo comodo"],["A2","Medio sostenuto"],["Soglia","Ritmo più alto"],["a 1'10\"","Partenza a intervallo: un 50 a 1'10\" significa nuotare e recuperare in 1'10\" totali"],["Tecnica","Ogni 50 tutto di esercizio; i codici (SL1, DO2…) rimandano alla sezione Esercizi di tecnica"]],"note1":"Le partenze sono tarate su un 100 SL facile nuotato in circa 1'30\". Quando una riga ha più partenze, seguono l'ordine delle serie: \"·\" separa le serie, \"/\" le ripetizioni dentro un giro.","note2":"Virate e subacquee fanno parte di ogni ripetizione, anche quando la tabella non lo scrive: virata curata e uscita in subacquea di almeno 5 m. \"—\" nella partenza e \"Libero\" nelle indicazioni significano che quella parte si gestisce a sensazione.","blocks":[{"n":1,"name":"1 · Sensibilità","dates":"5 ott – 1 nov","metri":"2.300 – 2.500","heading":"Blocco 1 · Sensibilità (5 ottobre – 1 novembre)","note":"Tutto in A1: l'obiettivo è riprendere acqua e tecnica."},{"n":2,"name":"2 · Aerobico","dates":"2 – 29 nov","metri":"2.700 – 2.800","heading":"Blocco 2 · Aerobico","note":""},{"n":3,"name":"3 · Avvicinamento","dates":"30 nov – 3 gen","metri":"2.000 – 2.900","heading":"Blocco 3 · Avvicinamento","note":""},{"n":4,"name":"4 · Intensità","dates":"4 – 31 gen","metri":"3.200","heading":"Blocco 4 · Intensità","note":"Lavoro a soglia sullo SL e più metri di gambe."}],"blocks_h":"Blocchi","weeks":[{"heading":"Settimana 1 · 5 – 11 ottobre · 2.500 m","rows":[["Riscaldamento","3×100 (1SL, 1DO, 1 (50 RA + 50 SL))","2'00\"",""],["Tecnica","10×50 (4 SL1, 4 DO1, 2 RA1)","1'10\"","50 interi di esercizio"],["Centrale","6×100 SL + 8×50 (4DO completo + 4DO doppio)","1'50\" · 1'00\"",""],["Gambe","4×50 con tavoletta (SL, DO, RA, SL) + 6×50 alternati (1 DO, 1 25 DF + 25 SL)","1'15\" · 1'10\"","6×50 senza tavoletta"],["Defaticamento","2×100 pull buoy SL","2'00\"","Respirazione ogni 3"]],"n":1,"dates":"5 – 11 ottobre","metri":"2.500 m","tag":"","block":1},{"heading":"Settimana 2 · 12 – 18 ottobre · 2.300 m","rows":[["Riscaldamento","3×100 (SL, DO, 50 RA + 50 SL)","2'00\"",""],["Tecnica","10×50 (4 SL2, 4 DO2, 2 DF1)","1'10\"","50 interi di esercizio"],["Centrale","6×100 (3 SL, 3 DO) + 2×100 misti","1'55\" · 2'10\"",""],["Gambe","4×50 con tavoletta (SL, DO, RA, SL) + 6×50 alternati (1 SL, 1 25 DF + 25 SL)","1'15\" · 1'10\"","6×50 senza tavoletta"],["Defaticamento","2×100 pull buoy SL","2'00\"","Respirazione ogni 3"]],"n":2,"dates":"12 – 18 ottobre","metri":"2.300 m","tag":"","block":1},{"heading":"Settimana 3 · 19 – 25 ottobre · 2.500 m","rows":[["Riscaldamento","6×50 (misti cambio 25)","1'10\"",""],["Tecnica","10×50 (4 SL3, 4 DO1, 2 RA1)","1'10\"","50 interi di esercizio"],["Centrale","6×50 SL + 3×100 SL + 4×50 DO + 2×100 misti","55\" · 1'50\" · 1'00\" · 2'10\"",""],["Gambe","4×50 con tavoletta (SL, DO, RA, SL) + 12×25 (SL, DO, no tavola con sub ai 10m)","1'15\" · 40\"","12×25 senza tavoletta, subacquea fino ai 10 m"],["Defaticamento","2×100 pull buoy SL","2'00\"","Respirazione ogni 3"]],"n":3,"dates":"19 – 25 ottobre","metri":"2.500 m","tag":"","block":1},{"heading":"Settimana 4 · 26 ottobre – 1 novembre · 2.500 m","rows":[["Riscaldamento","300 easy a piacere","",""],["Tecnica","10×50 (4 SL1, 4 DO2, 2 DF1)","1'10\"","50 interi di esercizio"],["Centrale","4×(100 SL + 50 DO + 50 SL) + 2×100 misti","1'50\" / 1'00\" / 55\" · 2'10\"","Nessuna pausa extra tra i giri"],["Gambe","8×50 NO tavoletta (SL, DO, sub 10m sempre)","1'10\"","Senza tavoletta, subacquea fino ai 10 m a ogni partenza e virata"],["Defaticamento","2×100 dorso doppio + 100 a piacere","2'00\"",""]],"n":4,"dates":"26 ottobre – 1 novembre","metri":"2.500 m","tag":"","block":1},{"heading":"Settimana 5 · 2 – 8 novembre · 2.700 m","rows":[["Riscaldamento","300 easy","",""],["Tecnica","10×50 (4 SL2, 4 DO2, 2 RA1)","1'10\"","50 interi di esercizio"],["Centrale","12×50 SL + 6×50 DO + 2×50 RA + 4×(25 DF + 25 SL)","50\" · 1'00\" · 1'05\" · 1'05\"","SL in A2 · DO: 3 in dorso doppio"],["Gambe","2×100 con tavoletta (SL, DO) + 4×25 veloci (2 SL, 1 DO, 1 DF)","2'20\" · 40\"","4×25 a massima frequenza"],["Defaticamento","200 dorso doppio + 200 a piacere","—","Libero"]],"n":5,"dates":"2 – 8 novembre","metri":"2.700 m","tag":"","block":2},{"heading":"Settimana 6 · 9 – 15 novembre · 2.700 m","rows":[["Riscaldamento","200 easy + 100 gambe","—",""],["Tecnica","6×50 (2 SL3, 2 DO1, 2 DF1) + 4×25 max sub (2 SL, 2 DO)","1'10\" · 45\"","50 interi di esercizio · 25: subacquea più lunga possibile, poi nuotato fino al muro"],["Centrale","8×100 SL + 4×100 (2 DO, 2 MX) + 6×50 SL veloci","1'45\" · 1'55\" DO / 2'00\" misti · 1'00\"","SL in A2 · 6×50 veloci, uscita in subacquea"],["Gambe","4×100 con tavoletta (SL, DO, RA, SL)","2'20\"","—"],["Defaticamento","100 easy","—","Libero"]],"n":6,"dates":"9 – 15 novembre","metri":"2.700 m","tag":"","block":2},{"heading":"Settimana 7 · 16 – 22 novembre · 2.700 m","rows":[["Riscaldamento","300 sciolto + 200 gambe","—",""],["Tecnica","8×50 (4 SL3, 2 DO2, 2 RA1)","1'10\"","50 interi di esercizio"],["Centrale","3×(4×50 SL + 2×50 DO + 100 misti)","50\" / 55\" / 2'00\"","SL in A2"],["Gambe","4×50 A2 con tavoletta (2SL, 2DO) +100 easy + 4×25 veloci (2DO, 2DF)","1'10\" · libero · 40\"","4×25 a massima frequenza"],["Defaticamento","Quello che vuoi, almeno 200","—",""]],"n":7,"dates":"16 – 22 novembre","metri":"2.700 m","tag":"","block":2},{"heading":"Settimana 8 · 23 – 29 novembre · 2.800 m","rows":[["Riscaldamento","300 sciolto + 200 gambe","—",""],["Tecnica","8×50 (4 SL2, 2 DO1, 2 DF1)","1'10\"","50 interi di esercizio"],["Centrale","6×100 SL + 6×50 DO + 3×100 MIX","1'45\" · 55\" · 2'00\"","SL in A2 · misti con tecnica pulita"],["Gambe","4×100 con tavoletta (SL, DO, RA, SL)","2'20\"","—"],["Defaticamento","3×100 pull buoy SL","1'55\"","Respirazione ogni 3 e ogni 5, alternando"]],"n":8,"dates":"23 – 29 novembre","metri":"2.800 m","tag":"","block":2},{"heading":"Settimana 9 · 30 novembre – 6 dicembre · 2.900 m","rows":[["Riscaldamento","300 sciolto + 200 gambe","—",""],["Tecnica","6×50 (2 SL1, 2 DO2, 2 RA1) + 4×25 DF1","1'10\" · 40\"","50 interi di esercizio · 25 DF: un braccio, poi l'altro, poi completo"],["Centrale","2×(5×100: 3 SL + 2 DO) + 6×50 RA","1'45\" SL / 1'55\" DO · 1'05\"","Ogni serie in discesa, la quinta in A2"],["Gambe","6×50 A2(3 SL, 3 DO)","1'10\"","Senza tavoletta"],["Defaticamento","2×100 pull buoy SL + 200 a piacere","1'50\"","Respirazione ogni 3"]],"n":9,"dates":"30 novembre – 6 dicembre","metri":"2.900 m","tag":"","block":3},{"heading":"Settimana 10 · 7 – 13 dicembre · 2.900 m","rows":[["Riscaldamento","400 sciolto","—",""],["Tecnica","4×50 (2 SL2, 2 DO1)","1'10\"","50 interi di esercizio"],["Centrale","3×(3×100 SL + 100 DO) + 4×25 RA + 12×25 SL veloci","1'45\" / 1'55\" · 35\" · 40\"","Ogni giro più veloce del precedente · 12×25 a massima velocità"],["Gambe","8×50 (4 SL, 4 DO)","1'10\"","Senza tavoletta, subacquea fino ai 15 m"],["Defaticamento","300 easy","—","Libero"]],"n":10,"dates":"7 – 13 dicembre","metri":"2.900 m","tag":"","block":3},{"heading":"Settimana 11 · 14 – 20 dicembre · 2.900 m","rows":[["Riscaldamento","300 easy","—",""],["Tecnica","6×50 (2 SL3, 2 DO2, 2 DF1)","1'10\"","50 interi di esercizio"],["Centrale","16×50 SL + 4×100 DO (1 dorso doppio easy + 1 A2) + 3×100 misti","50\" · 1'55\" · 2'00\"","SL: dispari in A2, pari veloci · misti in A2"],["Gambe","10x50 misti cambio 25","1'10\"","Cambio stile ogni 25"],["Defaticamento","Quello che vuoi, 300","—","Libero"]],"n":11,"dates":"14 – 20 dicembre","metri":"2.900 m","tag":"","block":3},{"heading":"Settimana 12 · 21 – 27 dicembre · 2.000 m · scarico","rows":[["Riscaldamento","3×100 (SL, DO, 50 RA + 50 SL)","2'00\"",""],["Tecnica","6×50 (2 SL1, 2 DO1, 2 RA1)","1'10\"","50 interi di esercizio"],["Centrale","5×100 SL + 3×100 DO","1'50\" · 2'00\"",""],["Gambe","8×50 con tavoletta (2 per stile)","1'15\"","Facili"],["Defaticamento","4×50 a piacere","1'10\"",""]],"n":12,"dates":"21 – 27 dicembre","metri":"2.000 m","tag":"scarico","block":3},{"heading":"Settimana 13 · 28 dicembre – 3 gennaio · 2.900 m","rows":[["Riscaldamento","300 easy","—",""],["Tecnica","8×50 (3 SL2, 3 DO2, 2 RA1) + 4×25 DF1","1'10\" · 40\"","50 interi di esercizio · 25 DF: un braccio, poi l'altro, poi completo"],["Centrale","2×(5×100 SL) + 6×50 DO","1'45\" · 55\"","Ogni serie in discesa, la quinta in A2"],["Gambe","4×50 con tavoletta (SL, DO, RA, DF) + 6×50 (3 SL, 3 DO)","1'10\" · 1'10\"","6×50: 25 veloce + 25 facile, senza tavoletta"],["Defaticamento","2×100 pull buoy SL + 100 a piacere","1'50\"","Respirazione ogni 3"]],"n":13,"dates":"28 dicembre – 3 gennaio","metri":"2.900 m","tag":"","block":3},{"heading":"Settimana 14 · 4 – 10 gennaio · 3.200 m","rows":[["Riscaldamento","300 sciolto easy + 200 gambe","—",""],["Tecnica","6×50 (2 SL3, 2 DO1, 2 DF1) + 4×50 SL","1'10\" · 55\"","50 interi di esercizio · 4×50 progressivi, dal primo al quarto sempre più veloci"],["Centrale","6×100 SL + 4×50 SL + 5×100 DO","1'50\" · 1'00\" · 1'55\"","6×100 a soglia · 4×50 sciolti"],["Gambe","4×100 con tavoletta (SL, DO, RA, SL) + 8×25 veloci (3 SL, 3 DO, 1 RA, 1 DF)","2'15\" · 40\"","8×25 a massima frequenza"],["Defaticamento","2×100 pull buoy SL + 100 a piacere","1'50\"","Respirazione ogni 3"]],"n":14,"dates":"4 – 10 gennaio","metri":"3.200 m","tag":"","block":4},{"heading":"Settimana 15 · 11 – 17 gennaio · 3.200 m","rows":[["Riscaldamento","300 sciolto easy + 200 gambe","—",""],["Tecnica","6×50 (2 SL1, 2 DO2, 2 RA1) + 4×50 SL","1'10\" · 55\"","50 interi di esercizio · 4×50 progressivi, dal primo al quarto sempre più veloci"],["Centrale","12×50 SL + 2×100 misti + 5×100 DO","55\" · 2'00\" · 1'55\"","12×50 a soglia"],["Gambe","4×100 con tavoletta (SL, DO, RA, SL) + 8×25 veloci (3 SL, 3 DO, 1 RA, 1 DF)","2'15\" · 40\"","8×25 a massima frequenza"],["Defaticamento","2×100 pull buoy SL + 100 a piacere","1'50\"","Respirazione ogni 3"]],"n":15,"dates":"11 – 17 gennaio","metri":"3.200 m","tag":"","block":4},{"heading":"Settimana 16 · 18 – 24 gennaio · 3.200 m","rows":[["Riscaldamento","300 sciolto easy + 200 gambe","—",""],["Tecnica","6×50 (2 SL2, 2 DO1, 2 DF1) + 4×50 SL","1'10\" · 55\"","50 interi di esercizio · 4×50 progressivi, dal primo al quarto sempre più veloci"],["Centrale","10×100 SL + 6×50 DO","1'45\" · 55\"","SL: pari a soglia"],["Gambe","4×100 con tavoletta (SL, DO, RA, SL) + 8×25 veloci (3 SL, 3 DO, 1 RA, 1 DF)","2'15\" · 40\"","8×25 a massima frequenza"],["Defaticamento","2×100 pull buoy SL + 100 a piacere","1'50\"","Respirazione ogni 3"]],"n":16,"dates":"18 – 24 gennaio","metri":"3.200 m","tag":"","block":4},{"heading":"Settimana 17 · 25 – 31 gennaio · 3.200 m","rows":[["Riscaldamento","300 sciolto easy + 200 gambe","—",""],["Tecnica","6×50 (2 SL3, 2 DO2, 2 RA1) + 4×50 SL","1'10\" · 55\"","50 interi di esercizio · 4×50 progressivi, dal primo al quarto sempre più veloci"],["Centrale","2×(4×100 SL) + 4×50 DO + 3×100 misti","1'45\" · 55\" · 2'00\"","Ogni serie di 100 in discesa, l'ultimo a soglia"],["Gambe","4×100 con tavoletta (SL, DO, RA, SL) + 8×25 veloci (3 SL, 3 DO, 1 RA, 1 DF)","2'15\" · 40\"","8×25 a massima frequenza"],["Defaticamento","2×100 pull buoy SL + 100 a piacere","1'50\"","Respirazione ogni 3"]],"n":17,"dates":"25 – 31 gennaio","metri":"3.200 m","tag":"","block":4}],"extra_h":"Sedute extra e variazioni","extra_p":"Due sedute extra, fuori dai 2 allenamenti settimanali: non sostituiscono la tabella della settimana. Inseriscile quando vuoi aggiungere un allenamento o quando ti serve cambiare per non annoiarti. Valgono in qualsiasi blocco: la Versione A è la più corta, la B la più lunga.","extra":[{"heading":"Versione A · 1.500 m","rows":[["Riscaldamento","4×100: SL, DO, SL, misti","2'00\"",""],["Tecnica","6×50 (2 SL, 2 DO, 2 RA o DF)","1'10\"","50 interi di esercizio, codici a scelta dal catalogo"],["Nuoto","6×50 (3 SL, 3 DO)","55\" SL / 1'00\" DO","SL: respirazione ogni 3 e ogni 5, alternando"],["Dorso","4×100 DO","2'00\"","Subacquea fino ai 15 m a ogni partenza e virata"],["Defaticamento","100 a piacere","—",""]],"name":"Versione A","metri":"1.500 m"},{"heading":"Versione B · 2.200 m","rows":[["Riscaldamento","4×100: SL, DO, SL, misti","2'00\"",""],["Tecnica","6×50 (2 SL, 2 DO, 2 RA o DF)","1'10\"","50 interi di esercizio, codici a scelta dal catalogo"],["Pull","8×100 pull buoy SL","1'55\"","Respirazione ogni 3 e ogni 5, alternando"],["Dorso","4×100 DO","2'00\"",""],["Gambe","4×50 con tavoletta: SL, DO, RA, SL","1'15\"",""],["Defaticamento","100 a piacere","—",""]],"name":"Versione B","metri":"2.200 m"}],"exercises_intro":"Dal blocco 2 scegli tu quali fare liberamente, ti lascio materiale per ispirazione.","exercises":[{"stile":"Stile libero","items":[{"n":1,"code":"SL1","text":"Un braccio solo (l'altro lungo il fianco) · fingertip drag"},{"n":2,"code":"SL2","text":"Tocco avanti, tocco dorso mano, completo, altro braccio avanti"},{"n":3,"code":"SL3","text":"Pugni chiusi o dita aperte (una variante per almeno 50 m), oppure mix: 1 bracciata normale, 1 chiuso/aperto"}]},{"stile":"Dorso","items":[{"n":1,"code":"DO1","text":"Un braccio solo, l'altro lungo il fianco"},{"n":2,"code":"DO2","text":"180° su un lato: orecchio e metà occhio appoggiati, gambe e core attivi, 5–10\" e cambio lato facendo la bracciata"}]},{"stile":"Rana","items":[{"n":1,"code":"RA1","text":"Bracciata rana con gambe delfino"}]},{"stile":"Delfino","items":[{"n":1,"code":"DF1","text":"Sempre con gambata: prima un braccio, poi l'altro, poi completo (braccio fermo in alto)"}]}],"videos":[{"channel":"Arena","items":[["Vasca intera a un braccio, altro braccio lungo il fianco o avanti","youtube.com/watch?v=3c4TOTxTzAM"],["Quattro esercizi di tecnica dello stile","youtube.com/watch?v=3bn_0C3hhMA"],["Esercizio di dorso a un braccio","youtube.com/watch?v=aN1GBfZ84fg"]]},{"channel":"Kyle Millis","items":[["Esercizi di dorso di un campione NCAA e finalista ai Trials olimpici","youtube.com/watch?v=aU7sdctpxck"]]},{"channel":"Cody Miller","items":[["Come eseguire le virate","youtube.com/watch?v=uo0mTWSX31Y"],["Training Day con consigli di tecnica sulla rana","youtube.com/watch?v=ySI5iOTZC0o"]]}],"channels_h":"Canali YouTube per ispirazione","channels":[["Kyle Millis","youtube.com/@KyleMillis"],["Cody Miller","youtube.com/@CodyMillerAdventures"],["Thomas Ceccon","youtube.com/@thomasceccon1433"],["Swimprove","youtube.com/@swimprove"]]};
+
+(function(){
+  "use strict";
+  const DAY = 86400000;
+  const START = Date.UTC(2026, 9, 5);            // lunedì 5 ottobre 2026
+  const LAST_WEEK = 17;                          // finisce domenica 31 gennaio 2027
+  const $ = id => document.getElementById(id);
+  const el = (tag, text, cls) => { const e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; };
+  const pad = n => String(n).padStart(2, "0");
+
+  function isoToday(){ const d = new Date(); return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()); }
+  function toUTC(iso){ const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ""); return m ? Date.UTC(+m[1], +m[2]-1, +m[3]) : NaN; }
+  function fromUTC(ms){ const d = new Date(ms); return d.getUTCFullYear() + "-" + pad(d.getUTCMonth()+1) + "-" + pad(d.getUTCDate()); }
+  function longDate(ms){ return new Intl.DateTimeFormat("it-IT", {weekday:"long", day:"numeric", month:"long", year:"numeric", timeZone:"UTC"}).format(new Date(ms)); }
+
+  // settimana del programma: 1..17, 0 = prima dell'inizio, 18 = dopo la fine
+  function weekOf(ms){
+    const days = Math.round((ms - START) / DAY);
+    if (days < 0) return 0;
+    const w = Math.floor(days / 7) + 1;
+    return w > LAST_WEEK ? LAST_WEEK + 1 : w;
+  }
+  window.__weekOf = iso => weekOf(toUTC(iso));   // per i controlli
+
+  function sessionTable(rows){
+    const t = el("table", null, "session");
+    const head = el("tr");
+    ["Parte","Serie","Partenza","Indicazioni"].forEach(h => { const th = el("th", h); th.scope = "col"; head.appendChild(th); });
+    const thead = el("thead"); thead.appendChild(head); t.appendChild(thead);
+    const tb = el("tbody");
+    rows.forEach(r => {
+      const tr = el("tr");
+      const th = el("th", r[0]); th.scope = "row"; tr.appendChild(th);
+      tr.appendChild(el("td", r[1], "serie"));
+      const p = el("td", r[2], "partenza" + (r[2].length > 16 ? " long" : "")); p.dataset.label = "Partenza"; tr.appendChild(p);
+      const i = el("td", r[3], "indic"); i.dataset.label = "Indicazioni"; tr.appendChild(i);
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb);
+    return t;
+  }
+  function simpleTable(head, rows){
+    const t = el("table"); const tr = el("tr");
+    head.forEach(h => { const th = el("th", h); th.scope = "col"; tr.appendChild(th); });
+    const thead = el("thead"); thead.appendChild(tr); t.appendChild(thead);
+    const tb = el("tbody");
+    rows.forEach(r => { const row = el("tr"); r.forEach((c, k) => { const cell = el(k === 0 ? "th" : "td", c); if (k === 0) { cell.scope = "row"; cell.style.whiteSpace = "normal"; } row.appendChild(cell); }); tb.appendChild(row); });
+    t.appendChild(tb); return t;
+  }
+  function exItem(c){
+    const li = el("li");
+    li.appendChild(el("span", String(c.n), "n"));
+    li.appendChild(el("span", c.code, "code"));
+    li.appendChild(el("span", c.text, "t"));
+    return li;
+  }
+  function link(url, label){ const a = el("a", label); a.href = url; a.target = "_blank"; a.rel = "noopener"; return a; }
+
+  // 2–3 promemoria, solo con frasi e regole del documento
+  function recommendations(w){
+    const out = [];
+    const block = DATA.blocks[w.block - 1];
+    const has = re => w.rows.some(r => re.test(r[1]) || re.test(r[3]));
+    if (/scarico/i.test(w.tag)) out.push("Settimana di scarico: " + w.metri + " in tutto.");
+    w.rows.forEach(r => { if (/soglia/i.test(r[3])) out.push("Serie a soglia (" + r[0].toLowerCase() + "): " + r[3] + ". Soglia = ritmo più alto."); });
+    if (block.note) out.push(block.note);
+    if (w.rows.some(r => r[2] === "—" || r[3] === "—" || /^libero$/i.test(r[3]) || /libero/.test(r[2])))
+      out.push("Dove trovi “—” nella partenza o “Libero” nelle indicazioni, quella parte si gestisce a sensazione.");
+    if (has(/\bA2\b/)) out.push("A2 = medio sostenuto.");
+    out.push("Virate e subacquee fanno parte di ogni ripetizione, anche quando la tabella non lo scrive: virata curata e uscita in subacquea di almeno 5 m.");
+    if (w.rows.some(r => /[·\/]/.test(r[2])))
+      out.push("Quando una riga ha più partenze, seguono l'ordine delle serie: “·” separa le serie, “/” le ripetizioni dentro un giro.");
+    return out.slice(0, 3);
+  }
+  window.__recs = n => recommendations(DATA.weeks[n - 1]);
+
+  function drillsFor(w){
+    const seen = [];
+    w.rows.forEach(r => { (r[1].match(/\b(?:SL|DO|RA|DF)\d\b/g) || []).forEach(c => { if (seen.indexOf(c) < 0) seen.push(c); }); });
+    return DATA.exercises.reduce((acc, g) => acc.concat(g.items), []).filter(c => seen.indexOf(c.code) >= 0);
+  }
+
+  function render(){
+    const iso = $("date").value;
+    const ms = toUTC(iso);
+    const out = $("out"), ses = $("session");
+    out.hidden = true; ses.hidden = true; out.textContent = "";
+    if (isNaN(ms)) { $("daytext").textContent = "Scegli una data."; return; }
+    $("daytext").textContent = longDate(ms);
+    const n = weekOf(ms);
+    if (n === 0 || n > LAST_WEEK) {
+      const before = n === 0;
+      out.appendChild(el("strong", before ? "Il programma non è ancora iniziato" : "Il programma è terminato"));
+      out.appendChild(el("span", before
+        ? "La settimana 1 parte lunedì 5 ottobre 2026: per questa data non c'è una tabella."
+        : "La settimana 17 è finita domenica 31 gennaio 2027: per questa data non c'è una tabella."));
+      const b = el("button", before ? "Apri la settimana 1" : "Apri la settimana 17");
+      b.type = "button"; b.style.display = "block";
+      b.addEventListener("click", () => setDate(before ? START : START + (LAST_WEEK - 1) * 7 * DAY));
+      out.appendChild(b);
+      out.hidden = false;
+      return;
+    }
+    const w = DATA.weeks[n - 1];
+    const block = DATA.blocks[w.block - 1];
+    const wk = $("wk"); wk.textContent = "Settimana " + w.n;
+    if (w.tag) wk.appendChild(el("span", w.tag, "badge"));
+    $("wkdates").textContent = w.dates;
+    $("blk").textContent = block.name;
+    $("mt").textContent = w.metri;
+    const recs = $("recs"); recs.textContent = "";
+    recommendations(w).forEach(t => recs.appendChild(el("li", t)));
+    const mt = $("main-table"); mt.textContent = ""; mt.appendChild(sessionTable(w.rows));
+    const dr = drillsFor(w), dl = $("drills"); dl.textContent = "";
+    dr.forEach(c => dl.appendChild(exItem(c)));
+    $("drills-box").hidden = dr.length === 0;
+    ses.hidden = false;
+  }
+
+  function setDate(ms){ $("date").value = fromUTC(ms); render(); }
+
+  function staticParts(){
+    $("title").textContent = DATA.title;
+    $("intro").textContent = DATA.intro;
+    $("extra-h").textContent = DATA.extra_h;
+    $("extra-p").textContent = DATA.extra_p;
+    const ex = $("extra");
+    DATA.extra.forEach(e => { ex.appendChild(el("h3", e.heading)); const d = el("div", null, "tablewrap"); d.appendChild(sessionTable(e.rows)); ex.appendChild(d); });
+
+    const lg = $("legend");
+    lg.appendChild(el("p", DATA.howto_p, "lead"));
+    lg.appendChild(simpleTable(["Sigla","Significato"], DATA.legend));
+    lg.appendChild(el("p", DATA.note1, "lead")); lg.appendChild(el("p", DATA.note2, "lead"));
+
+    const cat = $("catalog");
+    cat.appendChild(el("p", DATA.exercises_intro, "lead"));
+    DATA.exercises.forEach(g => { cat.appendChild(el("h3", g.stile)); const ul = el("ul", null, "ex"); g.items.forEach(c => ul.appendChild(exItem(c))); cat.appendChild(ul); });
+
+    const vs = $("videos");
+    DATA.videos.forEach(g => {
+      vs.appendChild(el("h3", g.channel));
+      const ul = el("ul", null, "videos");
+      g.items.forEach((v, k) => {
+        const li = el("li");
+        li.appendChild(el("span", "Video " + (k + 1), "v"));
+        li.appendChild(el("span", v[0], "d"));
+        li.appendChild(link("https://www." + v[1], v[1]));
+        ul.appendChild(li);
+      });
+      vs.appendChild(ul);
+    });
+    vs.appendChild(el("h3", DATA.channels_h));
+    const cu = el("ul", null, "videos chan");
+    DATA.channels.forEach(c => { const li = el("li"); li.appendChild(el("span", c[0], "v")); li.appendChild(link("https://www." + c[1], c[1])); cu.appendChild(li); });
+    vs.appendChild(cu);
+
+    $("blocks").appendChild(simpleTable(["Blocco","Date","Metri a seduta"], DATA.blocks.map(b => [b.name, b.dates, b.metri])));
+  }
+
+  // tema: segue il sistema finché non si tocca il pulsante
+  function currentTheme(){
+    const forced = document.documentElement.getAttribute("data-theme");
+    if (forced) return forced;
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+  function labelTheme(){ $("theme").textContent = currentTheme() === "dark" ? "Tema chiaro" : "Tema scuro"; }
+  try { const saved = localStorage.getItem("nuoto-tema"); if (saved === "light" || saved === "dark") document.documentElement.setAttribute("data-theme", saved); } catch (e) {}
+  $("theme").addEventListener("click", () => {
+    const next = currentTheme() === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try { localStorage.setItem("nuoto-tema", next); } catch (e) {}
+    labelTheme();
+  });
+
+  $("date").addEventListener("change", render);
+  $("date").addEventListener("input", render);
+  $("today").addEventListener("click", () => { $("date").value = isoToday(); render(); });
+  $("prev").addEventListener("click", () => { const ms = toUTC($("date").value); setDate((isNaN(ms) ? toUTC(isoToday()) : ms) - 7 * DAY); });
+  $("next").addEventListener("click", () => { const ms = toUTC($("date").value); setDate((isNaN(ms) ? toUTC(isoToday()) : ms) + 7 * DAY); });
+
+  staticParts(); labelTheme();
+  $("date").value = isoToday();
+  render();
+})();
+</script>
+</body>
+</html>
